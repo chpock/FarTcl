@@ -1,0 +1,34 @@
+﻿#hpp name
+FarTclMessages.hpp
+#hpp encoding
+866
+#lang count
+2
+#id:0
+FarTclRus.lng 866 Russian "Russian (Русский)"
+#id:1
+FarTclEng.lng 866 English "English"
+
+MFarTclMenu
+"FarTcl"
+"FarTcl"
+
+MErrorMessageTitle
+"FarTcl - Ошибка"
+"FarTcl - Error"
+
+MErrorTclInit
+"Ошибка при инициализации Tcl интерпретатора:"
+"Error while init Tcl interp:"
+
+MErrorFarlibInit
+"Ошибка при инициализации Tcl библиотеки <farlib>:"
+"Error while init Tcl library <farlib>:"
+
+MMenuEditorExecute
+"&Выполнить выделенный блок/строку"
+"&Execute selected block/line"
+
+MMenuEditorReinit
+"&Реинициализировать интерпретатор Tcl"
+"&Reinitialize Tcl interpreter"

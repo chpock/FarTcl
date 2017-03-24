@@ -1,0 +1,132 @@
+NAME = FarTcl
+DLLNAME = $(NAME).dll
+
+!ifndef DEBUG
+_ODN_=final
+!else
+_ODN_=debug
+!endif
+!ifdef AMD64
+_ODB_=64
+!else
+_ODB_=32
+!endif
+
+OUTDIR=$(_ODN_).$(_ODB_).vc
+
+TCLVER = 86t
+TCLDIR = tcl8.6
+TCLSH = $(TCLDIR)\tclsh86t.exe
+
+OBJDIR = $(OUTDIR)\obj
+INCLUDE = $(INCLUDE);include;$(TCLDIR)\include
+DLLFULLNAME = $(OUTDIR)\$(DLLNAME)
+DEF = $(NAME).def
+MAP = $(OUTDIR)\$(NAME).map
+FARLIBFILES = farlib\farflags.tcl farlib\farlib.tcl farlib\procarg.tcl farlib\pkgIndex.tcl
+
+CPP_PROJ=/nologo /MP /W3 /Gy /GF /Zi /c /O2 /J /GS- /GR- /EHs-c- /LD /Fo"$(OBJDIR)\\" /Fd"$(OBJDIR)\\" /DUNICODE /D_UNICODE
+
+LIBS=$(TCLDIR)\tcl$(TCLVER).lib Rpcrt4.lib msvcrt.lib
+
+#!ifdef AMD64
+#CPP_PROJ=$(CPP_PROJ) /Zp8
+#ULOUT=-Tpd+
+#!else
+#CPP_PROJ=$(CPP_PROJ) /Zp1
+#ULOUT=-Tpd -Re
+#!endif
+
+
+LNK=$(_LINK_PATH_)link.exe
+LINK_FLAGS=/OPT:REF /OPT:ICF /nologo /dll /release /dynamicbase /merge:.rdata=.text /noentry /nodefaultlib /def:"$(DEF)" /map:"$(MAP)" /out:"$(DLLFULLNAME)" $(LIBS)
+
+LINK_OBJS = $(OBJDIR)\$(NAME).obj\
+            $(OBJDIR)\$(NAME).res
+
+
+ALL: $(OUTDIR) $(OBJDIR) $(DLLFULLNAME) $(OUTDIR)\tcl$(TCLVER).dll $(OUTDIR)\lib\$(TCLDIR) farlib addon
+	@echo Build DONE.
+
+INSTALL: ALL
+	@echo instal plugin ...
+	@if not exist "$(PREFIX)\$(NULL)" mkdir "$(PREFIX)"
+	@if exist "$(PREFIX)\$(DLLNAME)" @move /Y "$(PREFIX)\$(DLLNAME)" "$(PREFIX)\$(DLLNAME).%RANDOM%.d__" 2>nul
+	@if exist "$(PREFIX)\tcl$(TCLVER).dll" @move /Y "$(PREFIX)\tcl$(TCLVER).dll" "$(PREFIX)\tcl$(TCLVER).dll.%RANDOM%.d__" 2>nul
+	- @del /q "$(PREFIX)\*.d__" 2>nul >nul
+	@xcopy $(OUTDIR)\*.* "$(PREFIX)" /E /Q /Y /I /EXCLUDE:addon\filelist.exclude
+	@echo Install DONE.
+
+clean:
+	@echo clean outdir ...
+	- @rd /q /s "$(OUTDIR)" 2>nul >nul	
+	@echo clean farlib ...
+	@del /q farlib\farflags.tcl 2>nul >nul
+	@echo clean lang ...
+	@del /q FarTclMessages.hpp 2>nul >nul
+	@echo Clean DONE.
+
+.PHONY: farlib addon srcdist INSTALL
+
+$(OBJDIR)\$(NAME).obj: FarTcl.cpp farAPI_Basic.cpp farAPI_Editor.cpp farAPI_PluginManager.cpp farAPI_Tcl.cpp FarTclMessages.hpp guid.hpp version.hpp include\plugin.hpp $(TCLDIR)\include\tcl.h
+
+$(OUTDIR)\FarTclRus.lng $(OUTDIR)\FarTclEng.lng:
+
+FarTclMessages.hpp: FarTclMessages.feed $(OUTDIR)\FarTclRus.lng $(OUTDIR)\FarTclEng.lng
+	@echo generating language files
+	@tools\lng.generator.exe -nc -ol "$(OUTDIR)" FarTclMessages.feed
+
+.cpp{$(OBJDIR)}.obj::
+	@cl @<<
+	$(CPP_PROJ) $<
+<<
+
+$(DLLFULLNAME): $(LINK_OBJS)
+	@$(LNK) @<<
+	$(LINK_FLAGS) $(LINK_OBJS)
+<<
+
+$(OBJDIR)\$(NAME).res: $(NAME).rc
+	@rc /DUNICODE /fo"$(OBJDIR)\$(NAME).res" $(NAME).rc
+
+$(OBJDIR): $(OUTDIR)
+	@if not exist "$(OBJDIR)\$(NULL)" mkdir "$(OBJDIR)"
+
+$(OUTDIR):
+	@if not exist "$(OUTDIR)\$(NULL)" mkdir "$(OUTDIR)"
+
+$(OUTDIR)\lib: $(OUTDIR)
+	@if not exist "$(OUTDIR)\lib\$(NULL)" mkdir "$(OUTDIR)\lib"
+
+$(OUTDIR)\tcl$(TCLVER).dll: $(OUTDIR)
+  @copy /B /Y "$(TCLDIR)\tcl$(TCLVER).dll" $(OUTDIR) >nul
+
+$(OUTDIR)\lib\$(TCLDIR): $(OUTDIR)\lib 
+	@if not exist "$(OUTDIR)\lib\$(TCLDIR)\$(NULL)" mkdir "$(OUTDIR)\lib\$(TCLDIR)"
+	@echo build $(TCLDIR) library...
+	@xcopy $(TCLDIR)\lib\*.* $(OUTDIR)\lib\$(TCLDIR) /E /Q /Y /I
+
+farlib: $(OUTDIR)\lib farlib\farflags.tcl
+	@echo build farlib ...
+	@if not exist "$(OUTDIR)\lib\farlib\$(NULL)" mkdir "$(OUTDIR)\lib\farlib"
+	@for %I in ($(FARLIBFILES)) do @copy /B /Y %I $(OUTDIR)\lib\farlib >nul
+
+farlib\farflags.tcl: include\plugin.hpp
+	@echo generating farflags.tcl
+	@$(TCLSH) farlib\_genflags.tcl include\plugin.hpp 2>nul >farlib\farflags.tcl
+
+addon: $(OUTDIR)\lib
+	@echo build addon ...
+	@if not exist "$(OUTDIR)\addon\$(NULL)" mkdir "$(OUTDIR)\addon"
+	@for %I in (test.tcl FarTcl.lua) do @copy /B /Y addon\%I $(OUTDIR)\addon >nul
+
+srcdist:
+	@echo create source dist ...
+	@tools\zip.exe -r ..\fartcl_$(VERS)_src.zip * >nul
+
+dist: INSTALL
+	@echo create binary dist ...
+	@cd $(PREFIX)
+	@cd ..
+	@..\tools\zip.exe -r ..\..\fartcl_$(VERS)_x$(_ODB_).zip * >nul
+	@cd ..
