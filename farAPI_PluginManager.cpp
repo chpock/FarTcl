@@ -22,7 +22,7 @@ int Far_PluginControl_GetPluginInfo(ClientData cd, Tcl_Interp *interp, int objc,
 
   InitParam_TclToC_Pointer(1, hHandle, HANDLE);
 
-  size_t size=Info.PluginsControl(hHandle,PCTL_GETPLUGININFORMATION,0,NULL);
+  size_t size=Info.PluginsControl(hHandle, PCTL_GETPLUGININFORMATION, 0, NULL);
   if (size > 0) {
     FarGetPluginInformation *FGPInfo=(FarGetPluginInformation*)ckalloc(size);
     FGPInfo->StructSize=sizeof(FarGetPluginInformation);
@@ -90,7 +90,7 @@ int Far_PluginControl_UnloadPlugin(ClientData cd, Tcl_Interp *interp, int objc, 
 {
   InitParam_TclToC_Pointer(1, hHandle, HANDLE);
 
-  intptr_t result = Info.PluginsControl(hHandle, PCTL_UNLOADPLUGIN, NULL, NULL);
+  intptr_t result = Info.PluginsControl(hHandle, PCTL_UNLOADPLUGIN, 0, NULL);
 
   FreeParam_TclToC_Pointer(hHandle);
 

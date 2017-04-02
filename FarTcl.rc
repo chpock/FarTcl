@@ -15,20 +15,20 @@ FILEFLAGS VS_FF_PRERELEASE
 #endif
 
 {
- BLOCK L"StringFileInfo"
+ BLOCK "StringFileInfo"
  {
-  BLOCK L"000004E4"
+  BLOCK "000004E4"
   {
-   VALUE L"FileDescription",PLUGIN_DESC
-   VALUE L"FileVersion",PLUGIN_VERSION
-   VALUE L"ProductVersion",PLUGIN_VERSION
-   VALUE L"InternalName",PLUGIN_NAME
-   VALUE L"OriginalFilename",PLUGIN_FILENAME
-   VALUE L"ProductName",PLUGIN_NAME
+   VALUE "FileDescription",PLUGIN_DESC
+   VALUE "FileVersion",PLUGIN_VERSION
+   VALUE "ProductVersion",PLUGIN_VERSION
+   VALUE "InternalName",PLUGIN_NAME
+   VALUE "OriginalFilename",PLUGIN_FILENAME
+   VALUE "ProductName",PLUGIN_NAME
   }
  }
- BLOCK L"VarFileInfo"
+ BLOCK "VarFileInfo"
  {
-   VALUE L"Translation",0,0x4e4
+   VALUE "Translation",0,0x4e4
  }
 }

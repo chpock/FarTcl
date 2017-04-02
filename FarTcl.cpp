@@ -59,7 +59,7 @@ int TclStdOut(ClientData, CONST char * buf, int toWrite, int *errorCode)
   if (ActiveEditor != -1) {
     // TODO: В выходном буфере могут быть \0 символы, они прерывают вывод в буфер
     Info.EditorControl(ActiveEditor, ECTL_INSERTTEXT, 0, (wchar_t *)buf);
-    Info.EditorControl(ActiveEditor, ECTL_REDRAW, NULL, NULL);
+    Info.EditorControl(ActiveEditor, ECTL_REDRAW, 0, NULL);
   };
   return toWrite;
 };
@@ -71,7 +71,7 @@ int TclStdErr(ClientData, CONST char * buf, int toWrite, int *errorCode)
   if (ActiveEditor != -1) {
     // TODO: В выходном буфере могут быть \0 символы, они прерывают вывод в буфер
     Info.EditorControl(ActiveEditor, ECTL_INSERTTEXT, 0, (wchar_t *)buf);
-    Info.EditorControl(ActiveEditor, ECTL_REDRAW, NULL, NULL);
+    Info.EditorControl(ActiveEditor, ECTL_REDRAW, 0, NULL);
   };
   return toWrite;
 };
@@ -203,21 +203,28 @@ void ExecuteBlockLine()
   int resultcode = Tcl_EvalEx(interp, (char *)Tcl_DStringValue(&dString), Tcl_DStringLength(&dString), TCL_EVAL_GLOBAL);
   ActiveEditor = -1;
 
+  wchar_t sOK[]       = L"[TCL_OK]", \
+          sERROR[]    = L"[TCL_ERROR]", \
+          sRETURN[]   = L"[TCL_RETURN]", \
+          sBREAK[]    = L"[TCL_BREAK]", \
+          sCONTINUE[] = L"[TCL_CONTINUE]", \
+          sSPACE[]    = L" ";
+
   switch (resultcode) {
   case TCL_OK:
-    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, L"[TCL_OK]");
+    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, sOK);
     break;
   case TCL_ERROR:
-    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, L"[TCL_ERROR]");
+    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, sERROR);
     break;
   case TCL_RETURN:
-    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, L"[TCL_RETURN]");
+    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, sRETURN);
     break;
   case TCL_BREAK:
-    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, L"[TCL_BREAK]");
+    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, sBREAK);
     break;
   case TCL_CONTINUE:
-    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, L"[TCL_CONTINUE]");
+    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, sCONTINUE);
     break;
   default:
     wchar_t buff[60];
@@ -228,7 +235,7 @@ void ExecuteBlockLine()
   Tcl_WinUtfToTChar(Tcl_GetStringResult(interp), -1, &dString);
 
   if (Tcl_DStringLength(&dString) > 0) {
-    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, L" ");
+    Info.EditorControl(-1,ECTL_INSERTTEXT, 0, sSPACE);
     Info.EditorControl(-1,ECTL_INSERTTEXT, 0, Tcl_DStringValue(&dString));
   };
   Info.EditorControl(-1,ECTL_INSERTSTRING,0,0);
@@ -246,7 +253,7 @@ void InitializeInterp()
   interp = Tcl_CreateInterp();
 
   Tcl_Eval(interp, "encoding system utf-8");
-  Tcl_Eval(interp, "set tcl_library [file join [file dirname [info nameofexecutable]] Plugins FarTcl lib tcl8.6]");
+  Tcl_Eval(interp, "set tcl_library [file join [file dirname [info nameofexecutable]] Plugins FarTcl lib tcl]");
 
    Tcl_Channel stdoutChannel = Tcl_CreateChannel(&stdoutChannelType, "farstdout", (ClientData) TCL_STDOUT, TCL_WRITABLE);
   if (stdoutChannel)
@@ -296,13 +303,20 @@ void InitializeInterp()
     Tcl_CreateObjCommand(interp, "::Far::core::EditorControl", Far_EditorControl, NULL, NULL);
   };
 
-  unsigned char* guidstr;
-  UuidToStringA(&MainGuid, &guidstr);
-  Tcl_SetVar(interp, "::Far::MainGUID", reinterpret_cast<char *>(guidstr), 0);
-  RpcStringFreeA(&guidstr);
+  wchar_t guidstr[37];
+  FSF.sprintf(guidstr, L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x", \
+      MainGuid.Data1, MainGuid.Data2, MainGuid.Data3, \
+      MainGuid.Data4[0], MainGuid.Data4[1], MainGuid.Data4[2], MainGuid.Data4[3], \
+      MainGuid.Data4[4], MainGuid.Data4[5], MainGuid.Data4[6], MainGuid.Data4[7]);
+
+  Tcl_DString buf;
+  Tcl_WinTCharToUtf(guidstr, -1, &buf);
+  Tcl_SetVar(interp, "::Far::MainGUID", Tcl_DStringValue(&buf), 0);
+  Tcl_DStringFree(&buf);
+
 };
 
-void WINAPI GetGlobalInfoW(struct GlobalInfo *Info)
+__declspec(dllexport) void WINAPI GetGlobalInfoW(struct GlobalInfo *Info)
 {
   Info->StructSize=sizeof(GlobalInfo);
   Info->MinFarVersion=FARMANAGERVERSION;
@@ -313,7 +327,7 @@ void WINAPI GetGlobalInfoW(struct GlobalInfo *Info)
   Info->Author=PLUGIN_AUTHOR;
 }
 
-void WINAPI SetStartupInfoW(const struct PluginStartupInfo *Info)
+__declspec(dllexport) void WINAPI SetStartupInfoW(const struct PluginStartupInfo *Info)
 {
   ::Info=*Info;
   FSF=*Info->FSF;
@@ -323,7 +337,7 @@ void WINAPI SetStartupInfoW(const struct PluginStartupInfo *Info)
   InitializeInterp();
 }
 
-void WINAPI GetPluginInfoW(struct PluginInfo *Info)
+__declspec(dllexport) void WINAPI GetPluginInfoW(struct PluginInfo *Info)
 {
   Info->StructSize=sizeof(*Info);
   Info->Flags=PF_EDITOR;
@@ -334,7 +348,7 @@ void WINAPI GetPluginInfoW(struct PluginInfo *Info)
   Info->PluginMenu.Count=ARRAYSIZE(PluginMenuStrings);
 }
 
-HANDLE WINAPI OpenW(const struct OpenInfo *OInfo)
+__declspec(dllexport) HANDLE WINAPI OpenW(const struct OpenInfo *OInfo)
 {
   if (OInfo->OpenFrom == OPEN_EDITOR) {
     size_t i;

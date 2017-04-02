@@ -1,5 +1,5 @@
 package require farlib::flags 0.0.1
-package require procarg 0.0.1
+package require procarg
 package provide farlib 0.0.1
 
 namespace eval ::Far {
@@ -186,13 +186,13 @@ namespace eval ::Far {
     }
 
     procarg register realtotab {
-      {0        int -default 0 -restrict { {-1 +} }}
+      {-spos    int -default 0 -restrict { {-1 +} }}
       {-id      int -default -1 -restrict { {-1 +} }}
       {-line    int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register tabtoreal {
-      {0        int -default 0 -restrict { {-1 +} }}
+      {-spos    int -default 0 -restrict { {-1 +} }}
       {-id      int -default -1 -restrict { {-1 +} }}
       {-line    int -default -1 -restrict { {-1 +} }}
     }
@@ -591,14 +591,14 @@ proc ::Far::EditorControl::quit { args } {
   return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_QUIT]
 }
 
-proc ::Far::EditorControl::realtotab { spos args } {
+proc ::Far::EditorControl::realtotab { args } {
   procarg parse
-  return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_REALTOTAB $opts(-line) $spos]
+  return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_REALTOTAB $opts(-line) $opts(-spos)]
 }
 
-proc ::Far::EditorControl::tabtoreal { spos args } {
+proc ::Far::EditorControl::tabtoreal { args } {
   procarg parse
-  return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_TABTOREAL $opts(-line) $spos]
+  return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_TABTOREAL $opts(-line) $opts(-spos)]
 }
 
 proc ::Far::EditorControl::savefile { args } {

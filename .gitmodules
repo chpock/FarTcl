@@ -1,0 +1,6 @@
+[submodule "src/tcl"]
+	path = src/tcl
+	url = https://github.com/tcltk/tcl.git
+[submodule "src/procarg"]
+	path = src/procarg
+	url = https://github.com/chpock/procarg.git

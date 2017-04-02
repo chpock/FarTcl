@@ -119,7 +119,7 @@ int Far_InputBox(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const obj
   InitParam_TclToC_String(8, HelpTopic);
   InitParam_TclToC_WideInt(9, Flags);
 
-  wchar_t *DestText = new wchar_t[++DestSize];
+  wchar_t *DestText = (wchar_t *)ckalloc(++DestSize);
 
   intptr_t result = Info.InputBox(PluginIdPtr, IdPtr, Title, SubTitle, HistoryName, SrcText,
                                   DestText, DestSize, HelpTopic, Flags);
@@ -137,7 +137,7 @@ int Far_InputBox(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const obj
   InitResult_CToTcl();
   AppendResult_CToTcl_Int(result);
   AppendResult_CToTcl_String(DestText);
-  delete [] DestText;
+  ckfree(DestText);
   SetResult_CToTcl();
   return TCL_OK;
 };

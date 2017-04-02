@@ -22,7 +22,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       AssignParam_TclToC_Int(9, ec.Color.ForegroundColor);
       AssignParam_TclToC_Int(10, ec.Color.BackgroundColor);
       AssignParam_TclToC_GUID(11, ec.Owner);
-      result = Info.EditorControl(EditorID, ECTL_ADDCOLOR, NULL, &ec);
+      result = Info.EditorControl(EditorID, ECTL_ADDCOLOR, 0, &ec);
       break;
     }
     case ECTL_GETCOLOR: {
@@ -31,7 +31,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       AssignParam_TclToC_Int(4, ec.ColorItem);
 
       InitResultDict_CToTcl();
-      if (Info.EditorControl(EditorID, ECTL_GETCOLOR, NULL, &ec)) {
+      if (Info.EditorControl(EditorID, ECTL_GETCOLOR, 0, &ec)) {
         AppendResultDict_CToTcl_Int("startpos", ec.StartPos);
         AppendResultDict_CToTcl_Int("endpos", ec.EndPos);
         AppendResultDict_CToTcl_Int("priority", ec.Priority);
@@ -76,24 +76,24 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
           break;
         case ESPT_GETWORDDIV: {
           esp.wszParam = NULL;
-          size_t size = Info.EditorControl(EditorID, ECTL_SETPARAM, NULL, &esp);
-          esp.wszParam = new wchar_t[size];
+          size_t size = Info.EditorControl(EditorID, ECTL_SETPARAM, 0, &esp);
+          esp.wszParam = (wchar_t *)ckalloc(size);
           esp.Size = size;
 
-          Info.EditorControl(EditorID, ECTL_SETPARAM, NULL, &esp);
+          Info.EditorControl(EditorID, ECTL_SETPARAM, 0, &esp);
 
           SetResult_CToTcl_String(esp.wszParam);
 
           Tcl_DStringFree(&ds);
           FreeParam_TclToC_Int(Param);
           FreeParam_TclToC_Int(EditorID);
-          delete [] esp.wszParam;
+          ckfree(esp.wszParam);
           return TCL_OK;
           break;
         };
       };
 
-      result = Info.EditorControl(EditorID, ECTL_SETPARAM, NULL, &esp);
+      result = Info.EditorControl(EditorID, ECTL_SETPARAM, 0, &esp);
 
       Tcl_DStringFree(&ds);
       FreeParam_TclToC_Int(Param);
@@ -102,7 +102,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
     case ECTL_READINPUT: {
       INPUT_RECORD rec;
 
-      Info.EditorControl(EditorID, ECTL_READINPUT, NULL, &rec);
+      Info.EditorControl(EditorID, ECTL_READINPUT, 0, &rec);
 
       InitResultDict_CToTcl();
       switch (rec.EventType) {
@@ -156,7 +156,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
        switch (ProcessType) {
          case 0: {
            InitParam_TclToC_CustomType(4, rec, INPUT_RECORD);
-          result = Info.EditorControl(EditorID, ECTL_PROCESSINPUT, NULL, rec);
+          result = Info.EditorControl(EditorID, ECTL_PROCESSINPUT, 0, rec);
            FreeParam_TclToC_CustomType(rec);
          };
        }
@@ -171,7 +171,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       AssignParam_TclToC_Int(5, es.BlockStartPos);
       AssignParam_TclToC_Int(6, es.BlockWidth);
       AssignParam_TclToC_Int(7, es.BlockHeight);
-      result = Info.EditorControl(EditorID, ECTL_SELECT, NULL, &es);
+      result = Info.EditorControl(EditorID, ECTL_SELECT, 0, &es);
       break;
     }
     case ECTL_DELCOLOR: {
@@ -179,18 +179,18 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       AssignParam_TclToC_GUID(3, edc.Owner);
       AssignParam_TclToC_Int(4, edc.StringNumber);
       AssignParam_TclToC_Int(5, edc.StartPos);
-      result = Info.EditorControl(EditorID, ECTL_DELCOLOR, NULL, &edc);
+      result = Info.EditorControl(EditorID, ECTL_DELCOLOR, 0, &edc);
       break;
     }
     case ECTL_DELETESESSIONBOOKMARK: {
       InitParam_TclToC_Int(3, Index);
-      result = Info.EditorControl(EditorID, ECTL_DELETESESSIONBOOKMARK, NULL, (void *)Index);
+      result = Info.EditorControl(EditorID, ECTL_DELETESESSIONBOOKMARK, 0, (void *)Index);
       FreeParam_TclToC_Int(Index);
       break;
     }
     case ECTL_EXPANDTABS:  {
       InitParam_TclToC_Int(3, Line);
-      result = Info.EditorControl(EditorID, ECTL_EXPANDTABS, NULL, &Line);
+      result = Info.EditorControl(EditorID, ECTL_EXPANDTABS, 0, &Line);
       FreeParam_TclToC_Int(Line);
       break;
     }
@@ -199,7 +199,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       EditorConvertPos ecp={sizeof(EditorConvertPos)};
       AssignParam_TclToC_Int(3, ecp.StringNumber);
       AssignParam_TclToC_Int(4, ecp.SrcPos);
-      result = Info.EditorControl(EditorID, static_cast<EDITOR_CONTROL_COMMANDS>(Cmd), NULL, &ecp);
+      result = Info.EditorControl(EditorID, static_cast<EDITOR_CONTROL_COMMANDS>(Cmd), 0, &ecp);
       if (result) {
         result = ecp.DestPos;
       };
@@ -236,11 +236,11 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
     case ECTL_GETFILENAME: {
       intptr_t size = Info.EditorControl(EditorID, ECTL_GETFILENAME, 0, NULL);
       if (size) {
-        wchar_t *fn = new wchar_t[size];
+        wchar_t *fn = (wchar_t *)ckalloc(size);
         if (fn) {
           Info.EditorControl(EditorID, ECTL_GETFILENAME, size, fn);
           SetResult_CToTcl_String(fn);
-          delete [] fn;
+          ckfree(fn);
         };
       };
       FreeParam_TclToC_Int(EditorID);
@@ -299,13 +299,13 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
     }
     case ECTL_INSERTSTRING: {
       InitParam_TclToC_Int(3, Indent);
-      result = Info.EditorControl(EditorID, ECTL_INSERTSTRING, NULL, &Indent);
+      result = Info.EditorControl(EditorID, ECTL_INSERTSTRING, 0, &Indent);
       FreeParam_TclToC_Int(Indent);
       break;
     }
     case ECTL_INSERTTEXT: {
       InitParam_TclToC_String(3, String);
-      result = Info.EditorControl(EditorID, ECTL_INSERTTEXT, NULL, String);
+      result = Info.EditorControl(EditorID, ECTL_INSERTTEXT, 0, String);
       FreeParam_TclToC_String(String);
       break;
     }
@@ -321,7 +321,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       if (Tcl_DStringLength(&FileEOLDS) != 0) esf.FileEOL = (wchar_t *)Tcl_DStringValue(&FileEOLDS);
       AssignParam_TclToC_Int(5, esf.CodePage);
 
-      result = Info.EditorControl(EditorID, ECTL_SAVEFILE, NULL, &esf);
+      result = Info.EditorControl(EditorID, ECTL_SAVEFILE, 0, &esf);
 
       Tcl_DStringFree(&FileNameDS);
       Tcl_DStringFree(&FileEOLDS);
@@ -336,7 +336,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       AssignParam_TclToC_Int(7, esp.LeftPos);
       AssignParam_TclToC_Int(8, esp.Overtype);
 
-      result = Info.EditorControl(EditorID, ECTL_SETPOSITION, NULL, &esp);
+      result = Info.EditorControl(EditorID, ECTL_SETPOSITION, 0, &esp);
       break;
     }
     case ECTL_SETSTRING: {
@@ -351,7 +351,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       Tcl_WinUtfToTChar(Tcl_GetStringFromObj(objv[5], NULL), -1, &eol);
       if (Tcl_DStringLength(&eol)) ess.StringEOL = (wchar_t *)Tcl_DStringValue(&eol);
 
-      result = Info.EditorControl(EditorID, ECTL_SETSTRING, NULL, &ess);
+      result = Info.EditorControl(EditorID, ECTL_SETSTRING, 0, &ess);
 
       Tcl_DStringFree(&ds);
       Tcl_DStringFree(&eol);
@@ -359,7 +359,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
     }
     case ECTL_SETTITLE: {
       InitParam_TclToC_String(3, String);
-      result = Info.EditorControl(EditorID, ECTL_SETTITLE, NULL, String);
+      result = Info.EditorControl(EditorID, ECTL_SETTITLE, 0, String);
       FreeParam_TclToC_String(String);
       break;
     }
@@ -367,7 +367,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
       EditorUndoRedo eur={sizeof(EditorUndoRedo)};
       InitParam_TclToC_Int(3, Command);
       eur.Command = static_cast<EDITOR_UNDOREDO_COMMANDS>(Command);
-      result = Info.EditorControl(EditorID, ECTL_UNDOREDO, NULL, &eur);
+      result = Info.EditorControl(EditorID, ECTL_UNDOREDO, 0, &eur);
       FreeParam_TclToC_Int(Command);
       break;
     }
@@ -380,7 +380,7 @@ int Far_EditorControl(ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *cons
     case ECTL_NEXTSESSIONBOOKMARK:
     case ECTL_PREVSESSIONBOOKMARK:
     case ECTL_QUIT:
-      result = Info.EditorControl(EditorID, static_cast<EDITOR_CONTROL_COMMANDS>(Cmd), NULL, NULL);
+      result = Info.EditorControl(EditorID, static_cast<EDITOR_CONTROL_COMMANDS>(Cmd), 0, NULL);
       break;
   };
 
