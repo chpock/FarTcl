@@ -9,41 +9,41 @@ namespace eval ::Far {
   procarg regtype pointer -expression {[string match -nocase {ptr[0-9a-f][0-9a-f]*} $val]}
 
   procarg register Message {
-    {0           string  -allowempty false}
-    {-pluginid   guid     -allowempty true}
-    {-id         guid     -allowempty true}
+    {0          string  -allowempty false}
+    {-pluginid  guid    -allowempty true}
+    {-id        guid    -allowempty true}
     {-warning   switch}
-    {-leftalign  switch}
+    {-leftalign switch}
     {-allinone  switch}
-    {-stdbutt   string   -restrict {"" ok okcancel abortretryignore yesno yesnocancel retrycancel}}
-    {-helptopic  string}
+    {-stdbutt   string  -restrict {"" ok okcancel abortretryignore yesno yesnocancel retrycancel}}
+    {-helptopic string}
     {-title     string}
-    {-buttons    list}
+    {-buttons   list}
   }
 
   procarg register GetMsg {
-    {0          int    -restrict { { 0 + } }}
-    {-pluginid  guid  -allowempty true}
+    {0          int  -restrict { { 0 + } }}
+    {-pluginid  guid -allowempty true}
   }
 
   procarg register Menu {
-    {0                     list -restrict { 1 + }}
-    {-pluginid             guid -allowempty true}
-    {-id                   guid -allowempty true}
-    {-x                   int -default -1 -restrict { { -1 + } }}
-    {-y                    int -default -1 -restrict { { -1 + } }}
-    {-maxheight            int -default 0 -restrict { { 0 + } }}
-    {-title                str}
+    {0                    list -restrict { 1 + }}
+    {-pluginid            guid -allowempty true}
+    {-id                  guid -allowempty true}
+    {-x                   int  -default -1 -restrict { { -1 + } }}
+    {-y                   int  -default -1 -restrict { { -1 + } }}
+    {-maxheight           int  -default 0 -restrict { { 0 + } }}
+    {-title               str}
     {-bottom              str}
-    {-helptopic            str}
+    {-helptopic           str}
     {-autohl              switch}
     {-changeconsoletitle  switch}
-    {-showamp              switch}
-    {-reverseautohl        switch}
+    {-showamp             switch}
+    {-reverseautohl       switch}
     {-wrap                switch}
-    {-select              int -default 0 -restrict { { 0 + } }}
-    {-checked              list}
-    {-separator            list}
+    {-select              int  -default 0 -restrict { { 0 + } }}
+    {-checked             list}
+    {-separator           list}
     {-disabled            list}
     {-grayed              list}
     {-hidden              list}
@@ -52,18 +52,18 @@ namespace eval ::Far {
   procarg register InputBox {
     {-pluginid          guid -allowempty true}
     {-id                guid -allowempty true}
-    {-title              string}
+    {-title             string}
     {-subtitle          string}
-    {-historyname        string}
-    {-srctext            string}
-    {-destsize          int -default 1024 -restrict { { 1 + } }}
-    {-helptopic          string}
-    {-enableempty        switch}
+    {-historyname       string}
+    {-srctext           string}
+    {-destsize          int  -default 1024 -restrict { { 1 + } }}
+    {-helptopic         string}
+    {-enableempty       switch}
     {-password          switch}
-    {-expandenv          switch}
+    {-expandenv         switch}
     {-nouselasthistory  switch}
-    {-buttons            switch}
-    {-noampersand        switch}
+    {-buttons           switch}
+    {-noampersand       switch}
     {-editpath          switch}
     {-editpathexec      switch}
   }
@@ -100,160 +100,161 @@ namespace eval ::Far {
     namespace ensemble create
 
     procarg register addcolor {
-      {0                int}
-      {1                int}
-      {2                 list -restrict { 3 3 }}
-      {-id              int -default -1 -restrict { {-1 +} }}
-      {-line            int -default -1 -restrict { {-1 +} }}
-      {-priority        int -default 0 -restrict { {0 +} }}
-      {-owner            guid -allowempty true}
-      {-tabmarkfirst     switch}
-      {-tabmarkcurrent  switch}
+      {0               int}
+      {1               int}
+      {2               list -restrict { 3 3 }}
+      {-id             int  -default -1 -restrict { {-1 +} }}
+      {-line           int  -default -1 -restrict { {-1 +} }}
+      {-priority       int  -default 0 -restrict { {0 +} }}
+      {-owner          guid -allowempty true}
+      {-tabmarkfirst   switch}
+      {-tabmarkcurrent switch}
     }
 
     procarg register delcolor {
-      {-id  int -default -1 -restrict { {-1 +} }}
+      {-id    int  -default -1 -restrict { {-1 +} }}
       {-owner guid -allowempty true}
-      {-line  int -default -1 -restrict { {-1 +} }}
-      {-pos    int  -default -1 -restrict { {-1 +} }}
+      {-line  int  -default -1 -restrict { {-1 +} }}
+      {-pos   int  -default -1 -restrict { {-1 +} }}
     }
 
     procarg register getcolor {
-      {-id              int -default -1 -restrict { {-1 +} }}
-      {-line            int -default -1 -restrict { {-1 +} }}
-      {-item            int -default 0 -restrict { {0 +} }}
+      {-id   int -default -1 -restrict { {-1 +} }}
+      {-line int -default -1 -restrict { {-1 +} }}
+      {-item int -default 0  -restrict { {0 +} }}
     }
 
     procarg register select {
-      {0        string -restrict {none stream column}}
-      {-id      int -default -1 -restrict { {-1 +} }}
-      {-line    int -default -1 -restrict { {-1 +} }}
-      {-pos      int -default 0 -restrict { {0 +} }}
-      {-width    int -default 0}
-      {-height  int -default 1 -restrict { {1 +} }}
+      {0       string -restrict {none stream column}}
+      {-id     int -default -1 -restrict { {-1 +} }}
+      {-line   int -default -1 -restrict { {-1 +} }}
+      {-pos    int -default 0  -restrict { {0 +} }}
+      {-width  int -default 0}
+      {-height int -default 1 -restrict { {1 +} }}
     }
 
     procarg register redraw {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register deleteblock {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register deletechar {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register deletestring {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register expandtabs {
-      {-id      int -default -1 -restrict { {-1 +} }}
-      {-line    int -default -1 -restrict { {-1 +} }}
+      {-id   int -default -1 -restrict { {-1 +} }}
+      {-line int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register getbookmarks {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register getfilename {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register getinfo {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register getstring {
-      {-id      int -default -1 -restrict { {-1 +} }}
-      {-line    int -default -1 -restrict { {-1 +} }}
+      {-id   int -default -1 -restrict { {-1 +} }}
+      {-line int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register insertstring {
-      {-id      int -default -1 -restrict { {-1 +} }}
-      {-indent  boolean -default true}
+      {-id     int     -default -1 -restrict { {-1 +} }}
+      {-indent boolean -default true}
     }
 
     procarg register inserttext {
-      {0        string -allowempty false}
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {0   string -allowempty false}
+      {-id int    -default -1 -restrict { {-1 +} }}
     }
 
     procarg register quit {
-      {-id      int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register realtotab {
-      {-spos    int -default 0 -restrict { {-1 +} }}
-      {-id      int -default -1 -restrict { {-1 +} }}
-      {-line    int -default -1 -restrict { {-1 +} }}
+      {-spos int -default 0  -restrict { {-1 +} }}
+      {-id   int -default -1 -restrict { {-1 +} }}
+      {-line int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register tabtoreal {
-      {-spos    int -default 0 -restrict { {-1 +} }}
-      {-id      int -default -1 -restrict { {-1 +} }}
-      {-line    int -default -1 -restrict { {-1 +} }}
+      {-spos int -default 0  -restrict { {-1 +} }}
+      {-id   int -default -1 -restrict { {-1 +} }}
+      {-line int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register savefile {
-      {-id        int -default -1 -restrict { {-1 +} }}
-      {-filename  string}
-      {-eol        string -restrict {"" crlf lf}}
-      {-codepage  int -restrict { {0 +} }}
+      {-id       int    -default -1 -restrict { {-1 +} }}
+      {-filename string}
+      {-eol      string -restrict {"" crlf lf}}
+      {-codepage int    -restrict { {0 +} }}
     }
 
     procarg register setposition {
-      {-id        int -default -1 -restrict { {-1 +} }}
-      {-line      int -default -1 -restrict { {-1 +} }}
-      {-pos        int -default -1 -restrict { {-1 +} }}
-      {-tabpos    int -default -1 -restrict { {-1 +} }}
+      {-id            int -default -1 -restrict { {-1 +} }}
+      {-line          int -default -1 -restrict { {-1 +} }}
+      {-pos           int -default -1 -restrict { {-1 +} }}
+      {-tabpos        int -default -1 -restrict { {-1 +} }}
       {-topscreenline int -default -1 -restrict { {-1 +} }}
-      {-leftpos    int  -default -1 -restrict { {-1 +} }}
-      {-overtype  int -default -1 -restrict { {-1 +} }}
+      {-leftpos       int -default -1 -restrict { {-1 +} }}
+      {-overtype      int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register setstring {
-      {0           string -allowempty false}
-      {-id        int -default -1 -restrict { {-1 +} }}
-      {-line      int -default -1 -restrict { {-1 +} }}
-      {-eol        string -restrict {"" crlf lf}}
+      {0         string -allowempty false}
+      {-id       int    -default -1 -restrict { {-1 +} }}
+      {-line     int    -default -1 -restrict { {-1 +} }}
+      {-eol      string -restrict {"" crlf lf}}
+      {-encoding string -default "default"}
     }
 
     procarg register settitle {
-      {0          string}
-      {-id        int -default -1 -restrict { {-1 +} }}
+      {0   string}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register undoredo {
-      {0          string -restrict {begin end undo redo}}
-      {-id        int -default -1 -restrict { {-1 +} }}
+      {0   string -restrict {begin end undo redo}}
+      {-id int    -default -1 -restrict { {-1 +} }}
     }
 
     procarg register readinput {
-      {-id        int -default -1 -restrict { {-1 +} }}
+      {-id int -default -1 -restrict { {-1 +} }}
     }
 
     procarg register processinput {
-      {-id        int -default -1 -restrict { {-1 +} }}
-      {-dump      string -nodefault -allowempty false}
+      {-id   int    -default -1 -restrict { {-1 +} }}
+      {-dump string -nodefault -allowempty false}
     }
 
     procarg register setparam {
-      {-id          int -default -1 -restrict { {-1 +} }}
-      {-autoindent  boolean -nodefault}
-      {-charcodebase string -nodefault -restrict {oct hex dec}}
-      {-codepage  int -nodefault -restrict { {0 +} }}
-      {-cursorbeyoneol boolean -nodefault}
-      {-expandtabs string -nodefault -restrict {no all new}}
-      {-lockmode boolean -nodefault}
+      {-id               int     -default -1 -restrict { {-1 +} }}
+      {-autoindent       boolean -nodefault}
+      {-charcodebase     string  -nodefault -restrict {oct hex dec}}
+      {-codepage         int     -nodefault -restrict { {0 +} }}
+      {-cursorbeyoneol   boolean -nodefault}
+      {-expandtabs       string  -nodefault -restrict {no all new}}
+      {-lockmode         boolean -nodefault}
       {-savefileposition boolean -nodefault}
-      {-showwhitespace string -nodefault -restrict {no space spaceline}}
-      {-setbom  boolean -nodefault}
-      {-setworddiv  string -nodefault}
-      {-getworddiv switch -nodefault}
-      {-tabsize  int -nodefault -restrict { {1 512} }}
+      {-showwhitespace   string  -nodefault -restrict {no space spaceline}}
+      {-setbom           boolean -nodefault}
+      {-setworddiv       string  -nodefault}
+      {-getworddiv       switch  -nodefault}
+      {-tabsize          int     -nodefault -restrict { {1 512} }}
     }
 
     namespace eval sessionbookmark {
@@ -261,36 +262,44 @@ namespace eval ::Far {
       namespace ensemble create
 
       procarg register add {
-        {-id      int -default -1 -restrict { {-1 +} }}
+        {-id int -default -1 -restrict { {-1 +} }}
       }
       procarg register clear {
-        {-id      int -default -1 -restrict { {-1 +} }}
+        {-id int -default -1 -restrict { {-1 +} }}
       }
       procarg register get {
-        {-id      int -default -1 -restrict { {-1 +} }}
+        {-id int -default -1 -restrict { {-1 +} }}
       }
       procarg register delete {
-        {-id      int -default -1 -restrict { {-1 +} }}
-        {-index    int -default -1 -restrict { {-1 +} }}
+        {-id    int -default -1 -restrict { {-1 +} }}
+        {-index int -default -1 -restrict { {-1 +} }}
       }
       procarg register next {
-        {-id      int -default -1 -restrict { {-1 +} }}
+        {-id int -default -1 -restrict { {-1 +} }}
       }
       procarg register prev {
-        {-id      int -default -1 -restrict { {-1 +} }}
+        {-id int -default -1 -restrict { {-1 +} }}
       }
     }
   }
 
   procarg register FarColor {
-    {0           int -restrict { { 0 + } }}
-    {1           int -restrict { { 0 + } }}
-    {-fg4bit     switch}
-    {-bg4bit     switch}
+    {0          int -restrict { { 0 + } }}
+    {1          int -restrict { { 0 + } }}
+    {-fg4bit    switch}
+    {-bg4bit    switch}
     {-bold      switch}
     {-italic    switch}
-    {-underline  switch}
+    {-underline switch}
   }
+
+  variable codepage2encoding [list 65001 utf-8 \
+    855 cp855 866 cp866 \
+    20866 koi8-r \
+    28592 iso8859-2 28595 iso8859-5 28597 iso8859-7 28598 iso8859-8 \
+    1250 cp1250 1251 cp1251 1252 cp1252 1253 cp1253 1255 cp1255 \
+  ]
+  variable encoding2codepage [lreverse $codepage2encoding]
 
   variable VirtualKeyCodes [list {} lbutton rbutton cancel mbutton xbutton1 xbutton2 {} \
                                  back tab {} {} clear return {} {} \
@@ -325,6 +334,22 @@ namespace eval ::Far {
                                  {} {} {} {} {} {} attn crsel \
                                  exsel ereof play zoom noname pa1 oem_clear {}]
 
+}
+
+proc ::Far::Encoding2Codepage { encoding } {
+    variable encoding2codepage
+    if { [catch { dict get $encoding2codepage $encoding } result] } {
+        return -code error "Error: encoding '$encoding' is not supported"
+    }
+    return $result
+}
+
+proc ::Far::Codepage2Encoding { codepage } {
+    variable codepage2encoding
+    if { [catch { dict get $codepage2encoding $codepage } result] } {
+        return -code error "Error: codepage '$codepage' is not supported"
+    }
+    return $result
 }
 
 proc ::Far::Message { msg args } {
@@ -437,31 +462,31 @@ proc ::Far::InputBox { args } {
 proc ::Far::PluginControl::load { modulename args } {
   procarg parse
 
-  return [::Far::core::PluginControl_LoadPlugin $modulename $opts(-forceload)]
+  return [::Far::core::LoadPlugin $modulename $opts(-forceload)]
 }
 
 proc ::Far::PluginControl::findbyid { id } {
   procarg parse
-  return [::Far::core::PluginControl_FindPlugin $::Far::PFM_GUID $id]
+  return [::Far::core::FindPlugin $::Far::PFM_GUID $id]
 }
 
 proc ::Far::PluginControl::findbymodulename { modulename } {
   procarg parse
-  return [::Far::core::PluginControl_FindPlugin $::Far::PFM_MODULENAME $modulename]
+  return [::Far::core::FindPlugin $::Far::PFM_MODULENAME $modulename]
 }
 
 proc ::Far::PluginControl::unload { handle } {
   procarg parse
-  return [::Far::core::PluginControl_UnloadPlugin $handle]
+  return [::Far::core::UnloadPlugin $handle]
 }
 
 proc ::Far::PluginControl::getinfo { handle } {
   procarg parse
-  return [::Far::core::PluginControl_GetPluginInfo $handle]
+  return [::Far::core::GetPluginInfo $handle]
 }
 
 proc ::Far::PluginControl::get { } {
-  return [::Far::core::PluginControl_GetPlugins]
+  return [::Far::core::GetPlugins]
 }
 
 proc ::Far::EditorControl::addcolor { spos epos color args } {
@@ -475,7 +500,7 @@ proc ::Far::EditorControl::addcolor { spos epos color args } {
   }
 
   return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_ADDCOLOR $opts(-line) $spos $epos \
-          $opts(-priority) $flags [lindex $color 0] [lindex $color 1] [lindex $color 2] $opts(-owner)]
+    $opts(-priority) $flags [lindex $color 0] [lindex $color 1] [lindex $color 2] $opts(-owner)]
 }
 
 proc ::Far::EditorControl::getcolor { args } {
@@ -496,7 +521,7 @@ proc ::Far::EditorControl::select { blocktype args } {
   }
 
   return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_SELECT $blocktype $opts(-line) \
-          $opts(-pos) $opts(-width) $opts(-height)]
+    $opts(-pos) $opts(-width) $opts(-height)]
 }
 
 proc ::Far::EditorControl::delcolor { args } {
@@ -605,8 +630,8 @@ proc ::Far::EditorControl::savefile { args } {
   procarg parse
   switch -- $opts(-eol) {
     crlf    { set opts(-eol) "\r\n" }
-    lf      { set opts(-eol) "\n" }
-    default { set opts(-eol) "" }
+    lf      { set opts(-eol) "\n"   }
+    default { set opts(-eol) ""     }
   }
   return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_SAVEFILE $opts(-filename) $opts(-eol) $opts(-codepage)]
 }
@@ -615,8 +640,8 @@ proc ::Far::EditorControl::setstring { string args } {
   procarg parse
   switch -- $opts(-eol) {
     crlf    { set opts(-eol) "\r\n" }
-    lf      { set opts(-eol) "\n" }
-    default  { set opts(-eol) "" }
+    lf      { set opts(-eol) "\n"   }
+    default { set opts(-eol) ""     }
   }
   return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_SETSTRING $opts(-line) $string $opts(-eol)]
 }
@@ -627,7 +652,7 @@ proc ::Far::EditorControl::setposition { args } {
   if { $opts(-pos) != -1 } { set opts(-tabpos) -1 }
 
   return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_SETPOSITION $opts(-line) $opts(-pos) \
-          $opts(-tabpos) $opts(-topscreenline) $opts(-leftpos) $opts(-overtype)]
+    $opts(-tabpos) $opts(-topscreenline) $opts(-leftpos) $opts(-overtype)]
 }
 
 proc ::Far::EditorControl::settitle { title args } {
@@ -663,9 +688,9 @@ proc ::Far::EditorControl::undoredo { command args } {
 
   switch -- $command {
     "begin" { set command $::Far::EUR_BEGIN }
-    "end"    { set command $::Far::EUR_END }
-    "undo"  { set command $::Far::EUR_UNDO }
-    "redo"  { set command $::Far::EUR_REDO }
+    "end"   { set command $::Far::EUR_END   }
+    "undo"  { set command $::Far::EUR_UNDO  }
+    "redo"  { set command $::Far::EUR_REDO  }
   }
 
   return [::Far::core::EditorControl $opts(-id) $::Far::ECTL_UNDOREDO $command]

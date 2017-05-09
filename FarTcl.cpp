@@ -289,16 +289,16 @@ void InitializeInterp()
     Tcl_DStringFree(&buf);
   }
   else {
-    Tcl_CreateObjCommand(interp, "::Far::core::Message", Far_Message, NULL, NULL);
-    Tcl_CreateObjCommand(interp, "::Far::core::GetMsg", Far_GetMsg, NULL, NULL);
-    Tcl_CreateObjCommand(interp, "::Far::core::Menu", Far_Menu, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::Message",  Far_Message, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::GetMsg",   Far_GetMsg, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::Menu",     Far_Menu, NULL, NULL);
     Tcl_CreateObjCommand(interp, "::Far::core::InputBox", Far_InputBox, NULL, NULL);
 
-    Tcl_CreateObjCommand(interp, "::Far::core::PluginControl_GetPlugins", Far_PluginControl_GetPlugins, NULL, NULL);
-    Tcl_CreateObjCommand(interp, "::Far::core::PluginControl_GetPluginInfo", Far_PluginControl_GetPluginInfo, NULL, NULL);
-    Tcl_CreateObjCommand(interp, "::Far::core::PluginControl_FindPlugin", Far_PluginControl_FindPlugin, NULL, NULL);
-    Tcl_CreateObjCommand(interp, "::Far::core::PluginControl_UnloadPlugin", Far_PluginControl_UnloadPlugin, NULL, NULL);
-    Tcl_CreateObjCommand(interp, "::Far::core::PluginControl_LoadPlugin", Far_PluginControl_LoadPlugin, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::GetPlugins",    Far_GetPlugins, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::GetPluginInfo", Far_GetPluginInfo, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::FindPlugin",    Far_FindPlugin, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::UnloadPlugin",  Far_UnloadPlugin, NULL, NULL);
+    Tcl_CreateObjCommand(interp, "::Far::core::LoadPlugin",    Far_LoadPlugin, NULL, NULL);
 
     Tcl_CreateObjCommand(interp, "::Far::core::EditorControl", Far_EditorControl, NULL, NULL);
   };

@@ -1,6 +1,7 @@
 ::Far::Message "test it\nonemore\nksjd" -allinone -title "My Title" -leftalign -warning
       asd
 package require farlib
+set ::Far::MainGUID
 ::Far::Message [list "test it" "onemore" "ksjd"] -title "My Title" -leftalign -warning -buttons {bla alb}
 ::Far::GetMsg 3 -pluginid B076F0B0-90AE-408c-AD09-491606F09435
 ::Far::GetMsg 3 -pluginid sdlfkjsldkjf
@@ -9,15 +10,18 @@ package require farlib
 set a [::Far::PluginControl get]
 ::Far::PluginControl getinfo [lindex $a 15]
 set a [::Far::PluginControl findbyid bff142a4-f392-4e7d-84aa-a00298caf9ef]
-::Far::PluginControl findbymodulename {C:\Program Files\Far Manager\Plugins\FarTcl\FarTcl.dll}
+::Far::PluginControl findbymodulename {C:\Far Manager\Plugins\FarTcl\FarTcl.dll}
 ::Far::PluginControl getinfo $a
-::Far::PluginControl load {C:\Program Files\Far Manager\Plugins\FarTcl\FarTcl.dll}
+::Far::PluginControl load {C:\Far Manager\Plugins\FarTcl\FarTcl.dll}
 ::Far::PluginControl unload $a
 llength [set pl [::Far::PluginControl get]]
 dict get [::Far::PluginControl getinfo [lindex $pl 15]]
-set p [::Far::PluginControl findbyid -id bff142a4-f392-4e7d-84aa-a00298caf9e1]
+set p [::Far::PluginControl findbyid B076F0B0-90AE-408c-AD09-491606F09435]
+set p [::Far::PluginControl findbyid bff142a4-f392-4e7d-84aa-a00298caf9ef]
+::Far::PluginControl getinfo $p
 ::Far::FarColor 100 200
 ::Far::EditorControl addcolor 1 10 [::Far::FarColor 100 200 -underline] -line 3 -priority 10
+::Far::EditorControl getcolor -line 3 -item 0
 ::Far::EditorControl delcolor -line 3
 ::Far::EditorControl select stream -line 1 -height 2 -pos 10
 ::Far::EditorControl deleteblock
@@ -29,7 +33,7 @@ set p [::Far::PluginControl findbyid -id bff142a4-f392-4e7d-84aa-a00298caf9e1]
 ::Far::EditorControl getinfo
 ::Far::EditorControl getstring -line 5
 ::Far::EditorControl inserttext "лдоывда офдыл длфоыв длаооо"
-::Far::EditorControl realtotab 4 -line 1
+::Far::EditorControl realtotab -spos 4 -line 1
 ::Far::EditorControl savefile -filename testname -eol crlf -codepage 1251
 ::Far::EditorControl setposition -line 10 -pos 10
 ::Far::EditorControl setstring "блабла блабла"
@@ -45,7 +49,6 @@ set p [::Far::PluginControl findbyid -id bff142a4-f392-4e7d-84aa-a00298caf9e1]
 ::Far::EditorControl sessionbookmark clear
 ::Far::EditorControl sessionbookmark prev
 ::Far::EditorControl quit
-::Far::EditorControl getcolor -line 3 -item 1
 while 1 {
   set info [::Far::EditorControl readinput]
   ::Far::EditorControl settitle $info

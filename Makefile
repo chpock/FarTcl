@@ -1,6 +1,7 @@
 NAME = FarTcl
 DLLNAME = $(NAME).dll
 INSTALL_PREFIX = /cygdrive/c/Far Manager/Plugins/FarTcl
+DEBUG = 1
 
 CC=i686-w64-mingw32-gcc
 RC=i686-w64-mingw32-windres
@@ -40,7 +41,7 @@ LIBEXT    = a
 STLIB_LD	= ${AR} cr
 SHLIB_LD	= ${CC} -shared
 SHLIB_LD_LIBS	= ${LIBS}
-SHLIB_CFLAGS	= 
+SHLIB_CFLAGS	=
 SHLIB_SUFFIX	= .dll
 LIBS          = -lrpcrt4
 
@@ -51,6 +52,13 @@ CFLAGS_DEBUG    = -g
 CFLAGS_OPTIMIZE	= -O2 -fomit-frame-pointer
 
 CFLAGS          = -m32 -fno-rtti -fno-exceptions -DUNICODE -std=gnu++0x $(CFLAGS_OPTIMIZE)
+
+ifdef DEBUG
+CFLAGS_DBG = -g
+LDFLAGS_DBG = -Wl,-Map=$(MAP)
+else
+LDFLAGS_DBG = -Wl,--exclude-all-symbols
+endif
 
 LINK_OBJS = $(OBJDIR)/$(NAME).$(OBJEXT) \
             $(TCLSTUB) \
@@ -84,7 +92,7 @@ all: build
 
 $(OBJDIR)/$(NAME).$(OBJEXT): $(SOURCES) include/plugin.hpp $(TCLDIR)/generic/tcl.h
 	sed -i 's/define VER_BUILD .*/define VER_BUILD $(VER_BUILD_INCR)/' version.hpp
-	CPATH=$(INCLUDE) $(CPP) $(CFLAGS) -c -o $@ $<
+	CPATH=$(INCLUDE) $(CPP) $(CFLAGS) $(CFLAGS_DBG) -c -o $@ $<
 
 FarTclMessages.hpp: FarTclMessages.feed
 	@echo generating language files
@@ -92,7 +100,7 @@ FarTclMessages.hpp: FarTclMessages.feed
 
 $(DLLFULLNAME): $(LINK_OBJS)
 	@rm -f $(DLLFULLNAME)
-	${SHLIB_LD} $(LDFLAGS) -o $@ -pipe -static-libgcc -municode -Wl,--kill-at -Wl,--exclude-all-symbols $(LINK_OBJS) $(SHLIB_LD_LIBS)
+	${SHLIB_LD} $(LDFLAGS) $(LDFLAGS_DBG) -o $@ -pipe -static-libgcc -municode -Wl,--kill-at $(LINK_OBJS) $(SHLIB_LD_LIBS)
 
 $(OBJDIR)/$(NAME).res.$(OBJEXT): $(NAME).rc version.hpp
 	$(RC) -o $@ --include "include" $<
@@ -106,11 +114,11 @@ $(OUTDIR):
 $(OUTDIR)/lib: $(OUTDIR)
 	mkdir -p "$(OUTDIR)/lib"
 
-$(OUTDIR)/tcl$(TCLVER).dll: $(OUTDIR) $(TCLDIR)/win/tcl$(TCLVER).dll 
+$(OUTDIR)/tcl$(TCLVER).dll: $(OUTDIR) $(TCLDIR)/win/tcl$(TCLVER).dll
 	cp "$(TCLDIR)/win/tcl$(TCLVER).dll" "$(OUTDIR)"
 	find "$(TCLDIR)/win" -name "zlib*.dll" -exec cp {} "$(OUTDIR)" \;
 
-$(OUTDIR)/lib/tcl: $(OUTDIR)/lib 
+$(OUTDIR)/lib/tcl: $(OUTDIR)/lib
 	mkdir -p "$@"
 	cd "$(TCLDIR)/library" && cp -r * "$@"
 	find "$(TCLDIR)/win" -name "tcldde*.dll" -exec cp {} "$@/dde" \;
@@ -125,7 +133,7 @@ $(OUTDIR)/lib/farlib: $(OUTDIR)/lib $(SOURCES_FARLIB)
 	cp $(SOURCES_FARLIB) "$@"
 
 farlib/farflags.tcl: include/plugin.hpp
-	$(TCLSH) farlib/_genflags.tcl include/plugin.hpp 2>nul >farlib/farflags.tcl
+	$(TCLSH) farlib/_genflags.tcl include/plugin.hpp >farlib/farflags.tcl
 
 $(OUTDIR)/addon: $(OUTDIR)/lib $(SOURCES_ADDON)
 	mkdir -p "$@"
@@ -164,6 +172,7 @@ install: build
 	rm -rf "$(INSTALL_PREFIX)/*.lng"
 	mv "$(INSTALL_PREFIX)/FarTcl.dll" "$(INSTALL_PREFIX)/FarTcl.dll.$$RANDOM.d__" || echo "Not found"
 	find "$(INSTALL_PREFIX)" -name "tcl*.dll" -exec mv {} "$(INSTALL_PREFIX)/tcl.dll.$$RANDOM.d__" \;
+	find "$(INSTALL_PREFIX)" -name "zlib*.dll" -exec mv {} "$(INSTALL_PREFIX)/zlib.dll.$$RANDOM.d__" \;
 	cd "$(OUTDIR)" && cp -r * "$(INSTALL_PREFIX)"
 
 .PHONY: all build srcdist clean distclean dist install
